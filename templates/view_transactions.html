@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Your Transactions{% endblock %}
+
+{% block content %}
+<h2 style="text-align: center; margin-bottom: 30px;">📄 Transaction History</h2>
+
+{% if transactions %}
+<table style="width: 100%; border-collapse: collapse; background: white; color: black; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <thead style="background: linear-gradient(to right, #f2faff, #ffffff);">
+        <tr>
+            <th style="padding: 12px; border-bottom: 2px solid #ccc;">Date</th>
+            <th style="padding: 12px; border-bottom: 2px solid #ccc;">Type</th>
+            <th style="padding: 12px; border-bottom: 2px solid #ccc;">Category</th>
+            <th style="padding: 12px; border-bottom: 2px solid #ccc;">Amount (₹)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in transactions %}
+        <tr style="text-align: center; border-bottom: 1px solid #eee;">
+            <td style="padding: 10px; color: black;">{{ t.date }}</td>
+            <td style="padding: 10px; color: black;">{{ t.type }}</td>
+            <td style="padding: 10px; color: black;">{{ t.category }}</td>
+            <td style="padding: 10px; color: black;">₹{{ t.amount }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="text-align: center;">No transactions recorded yet.</p>
+{% endif %}
+{% endblock %}

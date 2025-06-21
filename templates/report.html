@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Budget Report{% endblock %}
+
+{% block content %}
+<h2 style="text-align: center; margin-bottom: 30px;">📊 Monthly Budget Report</h2>
+
+{% if budgets %}
+<div style="overflow-x:auto;">
+  <table class="report-table" style="width:100%; border-collapse: collapse; margin: auto; background: white; box-shadow: 0 0 15px rgba(0,0,0,0.05);">
+      <thead style="background: linear-gradient(to right, #d6f0ff, #ffffff);">
+          <tr style="border-bottom: 2px solid #ccc;">
+              <th style="padding: 12px;">Category</th>
+              <th style="padding: 12px;">Limit (₹)</th>
+              <th style="padding: 12px;">Spent (₹)</th>
+              <th style="padding: 12px;">Remaining</th>
+              <th style="padding: 12px;">Usage</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for budget in budgets %}
+              {% set spent = 0 %}
+              {% for t in budget.user.transactions %}
+                  {% if t.category == budget.category and t.type == 'expense' and t.date.strftime('%Y-%m') == now.strftime('%Y-%m') %}
+                      {% set spent = spent + t.amount %}
+                  {% endif %}
+              {% endfor %}
+              {% set remaining = budget.limit_amount - spent %}
+              {% set percent = (spent / budget.limit_amount) * 100 if budget.limit_amount > 0 else 0 %}
+              <tr style="text-align: center; border-bottom: 1px solid #eee;">
+                  <td style="padding: 10px;">{{ budget.category }}</td>
+                  <td>₹{{ "%.2f"|format(budget.limit_amount) }}</td>
+                  <td>₹{{ "%.2f"|format(spent) }}</td>
+                  <td style="color: {{ 'green' if remaining >= 0 else 'red' }}">
+                      ₹{{ "%.2f"|format(remaining) }}
+                  </td>
+                  <td>
+                      <div class="progress-bar-container" style="height: 20px; background: #e0e0e0; border-radius: 10px; overflow: hidden;">
+                          <div class="progress-bar
+                              {% if percent > 100 %}progress-danger
+                              {% elif percent > 75 %}progress-warning
+                              {% endif %}"
+                              style="width: {{ percent if percent <= 100 else 100 }}%; height: 100%; background: 
+                                  {% if percent > 100 %}#f44336
+                                  {% elif percent > 75 %}#ff9800
+                                  {% else %}#4caf50{% endif %};
+                                  color: white; text-align: center; font-size: 12px; line-height: 20px;">
+                              {{ "%.0f"|format(percent) }}%
+                          </div>
+                      </div>
+                  </td>
+              </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div>
+
+<!-- Pie Chart -->
+{% if chart_url %}
+    <div style="text-align: center; margin-top: 40px;">
+        <h3>📈 Expense Distribution</h3>
+        <img src="{{ url_for('static', filename=chart_url) }}" alt="Expense Chart" style="max-width: 450px; width: 100%; border-radius: 12px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);">
+    </div>
+{% endif %}
+
+{% else %}
+<p style="text-align: center;">No budget data available for this month.</p>
+{% endif %}
+
+<div style="text-align: center; margin-top: 40px;">
+    <a href="{{ url_for('dashboard') }}" class="action-btn">⬅ Back to Dashboard</a>
+</div>
+{% endblock %}

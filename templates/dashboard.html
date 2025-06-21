@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ current_user.username }} 👋</h2>
+
+<!-- Income / Expense / Balance Summary -->
+<div style="display: flex; gap: 20px; margin-top: 20px;">
+  <div style="background: #d4edda; padding: 20px; border-radius: 8px; flex: 1;">
+    <h3>Total Income</h3>
+    <p>₹{{ income }}</p>
+  </div>
+  <div style="background: #f8d7da; padding: 20px; border-radius: 8px; flex: 1;">
+    <h3>Total Expenses</h3>
+    <p>₹{{ expense }}</p>
+  </div>
+  <div style="background: #d1ecf1; padding: 20px; border-radius: 8px; flex: 1;">
+    <h3>Net Balance</h3>
+    <p>₹{{ income - expense }}</p>
+  </div>
+</div>
+
+<hr style="margin: 30px 0;">
+
+<!-- Navigation Buttons -->
+<!-- Dashboard Action Buttons -->
+<div class="button-group">
+  <a href="{{ url_for('finance.add_transaction') }}" class="action-btn btn-income">➕ Add Transaction</a>
+  <a href="{{ url_for('finance.view_transactions') }}" class="action-btn btn-expense">📄 View Transactions</a>
+  <a href="{{ url_for('finance.set_budget') }}" class="action-btn btn-budget">⚙️ Set Budget</a>
+  <a href="{{ url_for('report.view_report') }}" class="action-btn btn-report">📊 View Budget Report</a>
+</div>
+
+
+{% endblock %}
